@@ -44,12 +44,15 @@ class sbmtm():
 
         ## make a graph
         ## create a graph
+        # 创建一个无向图
         g = gt.Graph(directed=False)
         ## define node properties
         ## name: docs - title, words - 'word'
         ## kind: docs - 0, words - 1
+        # 定义节点属性
         name = g.vp["name"] = g.new_vp("string")
         kind = g.vp["kind"] = g.new_vp("int")
+        # 定义边的属性
         if counts:
             ecount = g.ep["count"] = g.new_ep("int")
 
@@ -67,14 +70,18 @@ class sbmtm():
             title = list_titles[i_d]
             text = list_texts[i_d]
 
+            # 创建文档节点
             d=docs_add[title]
             name[d] = title
             kind[d] = 0
+            # 构建词的频次词典
             c=Counter(text)
+            # 创建word节点
             for word,count in c.items():
                 w=words_add[word]
                 name[w] = word
                 kind[w] = 1
+                # 单词的频次作为边的属性
                 if counts:
                     e = g.add_edge(d, w)
                     ecount[e] = count
@@ -83,6 +90,7 @@ class sbmtm():
                         g.add_edge(d,w)
 
         ## filter word-types with less than n_min counts
+        # 过滤词频低的词
         if n_min is not None:
             v_n = g.new_vertex_property("int")
             for v in g.vertices():
@@ -94,8 +102,11 @@ class sbmtm():
                     v_filter[v] = False
                 else:
                     v_filter[v] = True
+            # 设置节点过滤条件
             g.set_vertex_filter(v_filter)
+            # 过滤掉为False的节点
             g.purge_vertices()
+            # 删除顶点和边缘过滤器，并将图形设置为未过滤状态
             g.clear_filters()
 
 
